@@ -1,9 +1,12 @@
 import { Scene } from 'phaser';
 
+var isMarioAbove = false;
+
 export class Game extends Scene {
   constructor() {
     super("Game");
   }
+
 
   preload() {
     this.load.setPath("assets");
@@ -207,8 +210,10 @@ export class Game extends Scene {
       repeat: -1,
       frameRate: 12,
     });
-
-    this.goomba.setVelocityX(50);
+    let gombaplay = false;
+    if (!gombaplay) {
+      this.goomba.setVelocityX(50);
+    }
 
     this.anims.create({
       key: "misteryblock-anim",
@@ -227,13 +232,27 @@ export class Game extends Scene {
     this.physics.add.collider(this.mario, this.blocks);
     this.physics.add.collider(this.mario, this.misteryblock);
     this.physics.add.collider(this.mario, this.pipe);
-    this.physics.add.collider(this.mario, this.goomba);
 
     this.physics.add.collider(this.goomba, this.blocks);
     this.physics.add.collider(this.goomba, this.misteryblock);
     this.physics.add.collider(this.goomba, this.pipe);
 
     this.keys = this.input.keyboard.createCursorKeys();
+
+    this.physics.add.overlap(this.mario, this.goomba, (mario, goomba) => {
+      let prevMarioPosition = { x: mario.x, y: mario.y };
+      let prevGoombaPosition = { x: goomba.x, y: goomba.y };
+      isMarioAbove = prevMarioPosition.y < prevGoombaPosition.y;
+      if(isMarioAbove) {
+        console.log("goomba se muere :3");
+        mario.setVelocityY(-250);
+        goomba.anims.play("goomba-walk", false );
+        goomba.setFrame(2);
+        goomba.setVelocityX(0);
+      } else {
+        console.log("mario muere :c")
+      }
+    });
 
 
     //      this.input.once('pointerdown', () => {
@@ -270,16 +289,20 @@ export class Game extends Scene {
 
 
     //moviendo a los goombas
-    this.goomba.anims.play("goomba-walk", true);
+    if (!isMarioAbove) {
+      this.goomba.anims.play("goomba-walk", true);
+    } else {
+      this.goomba.anims.play("goomba-walk", false);
+      this.goomba.setFrame(2);
+    }
 
-    if (this.goomba.body.touching.right) {
+    if (this.goomba.body.touching.right &&  !isMarioAbove) {
       this.goomba.setVelocityX(-50);
-    } else if (this.goomba.body.touching.left) {
+    } else if (this.goomba.body.touching.left &&  !isMarioAbove) {
       this.goomba.setVelocityX(50);
     }
 
     //kill mario
-    
 
     this.cameras.main.scrollX = this.mario.x - 60;
   }
