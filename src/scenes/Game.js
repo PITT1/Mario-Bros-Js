@@ -1,7 +1,5 @@
 import { Scene } from 'phaser';
 
-var isMarioAbove = false;
-
 export class Game extends Scene {
   constructor() {
     super("Game");
@@ -202,19 +200,36 @@ export class Game extends Scene {
 
 
 
-    //consigurando a los goombas
-    this.goomba = this.physics.add.sprite(200, 189, "goomba");
+    //creando a los goombas
+    
+      this.goomba = this.physics.add.group({
+        key: 'goomba',
+        repeat: 2
+      })
+      this.goombaCoordinates = [
+        { x: 100, y: 100, direction: 40, init: false },
+        { x: 150, y: 50, direction: 40, init: false },
+        { x: 250, y: 50, direction: 40, init: false },
+        { x: 400, y: 250, direction: -40, init: false },
+        { x: 500, y: 300, diection: -40, init: false }
+    ];
     this.anims.create({
-      key: "goomba-walk",
-      frames: this.anims.generateFrameNumbers("goomba", { start: 0, end: 1 }),
+      key: 'goomba-walk',
+      frames: this.anims.generateFrameNumbers('goomba', {start:0, end: 1}),
       repeat: -1,
-      frameRate: 12,
+      frameRate: 6
+    })
+    this.goomba.children.iterate((child, index) => {
+      child.setPosition(this.goombaCoordinates[index].x, this.goombaCoordinates[index].y);
+      if(this.goombaCoordinates[index].init == false) {
+        this.goombaCoordinates[index].init = true;
+        child.setVelocityX(this.goombaCoordinates[index].direction);
+      }
+      child.anims.play('goomba-walk', true);
     });
-    let gombaplay = false;
-    if (!gombaplay) {
-      this.goomba.setVelocityX(50);
-    }
 
+
+//--------------------------------------------------------------------------
     this.anims.create({
       key: "misteryblock-anim",
       frames: this.anims.generateFrameNumbers("misteryblock", {
@@ -234,25 +249,12 @@ export class Game extends Scene {
     this.physics.add.collider(this.mario, this.pipe);
 
     this.physics.add.collider(this.goomba, this.blocks);
-    this.physics.add.collider(this.goomba, this.misteryblock);
     this.physics.add.collider(this.goomba, this.pipe);
+    this.physics.add.collider(this.goomba, this.misteryblock);
+    this.physics.add.collider(this.goomba, this.goomba);
+
 
     this.keys = this.input.keyboard.createCursorKeys();
-
-    this.physics.add.overlap(this.mario, this.goomba, (mario, goomba) => {
-      let prevMarioPosition = { x: mario.x, y: mario.y };
-      let prevGoombaPosition = { x: goomba.x, y: goomba.y };
-      isMarioAbove = prevMarioPosition.y < prevGoombaPosition.y;
-      if(isMarioAbove) {
-        console.log("goomba se muere :3");
-        mario.setVelocityY(-250);
-        goomba.anims.play("goomba-walk", false );
-        goomba.setFrame(2);
-        goomba.setVelocityX(0);
-      } else {
-        console.log("mario muere :c")
-      }
-    });
 
 
     //      this.input.once('pointerdown', () => {
@@ -289,18 +291,14 @@ export class Game extends Scene {
 
 
     //moviendo a los goombas
-    if (!isMarioAbove) {
-      this.goomba.anims.play("goomba-walk", true);
-    } else {
-      this.goomba.anims.play("goomba-walk", false);
-      this.goomba.setFrame(2);
-    }
 
-    if (this.goomba.body.touching.right &&  !isMarioAbove) {
-      this.goomba.setVelocityX(-50);
-    } else if (this.goomba.body.touching.left &&  !isMarioAbove) {
-      this.goomba.setVelocityX(50);
-    }
+    this.goomba.children.iterate((child, index) => {
+      if (child.body.touching.right) {
+        child.setVelocityX(-40);
+      } else if (child.body.touching.left) {
+        child.setVelocityX(40);
+      }
+  });
 
     //kill mario
 
