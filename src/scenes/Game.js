@@ -236,6 +236,8 @@ export class Game extends Scene {
     });
 
 
+    
+
 //--------------------------------------------------------------------------
     this.anims.create({
       key: "misteryblock-anim",
@@ -256,9 +258,10 @@ export class Game extends Scene {
     this.physics.add.collider(this.mario, this.blocks);
     this.physics.add.collider(this.mario, this.misteryblock);
     this.physics.add.collider(this.mario, this.pipe);
-    this.physics.add.collider(this.mario, this.goomba, (mario) => {
-      if (mario.body.touching.down) {
+    this.physics.add.collider(this.mario, this.goomba, (mario, goomba) => {
+      if (mario.body.touching.down && goomba.body.touching.up) {
         mario.setVelocityY(-250);
+        goomba.destroy();
       } else {
         console.log("mario muere");
         marioIsDeath = true;
