@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+var marioIsDeath = false;
 
 export class Game extends Scene {
   constructor() {
@@ -45,6 +46,11 @@ export class Game extends Scene {
     this.add.image(200, 30, "cloud2").setOrigin(0, 0).setScale(0.3);
     this.add.image(100, 200, "bush1").setScale(0.5);
     this.add.image(-50, 200, "mountain2").setScale(0.5);
+    this.add.image(396, 6, 'cloud2').setOrigin(0, 0).setScale(0.3);
+    this.add.image(449, 200, "bush1").setScale(0.5);
+    this.add.image(666, 200, "bush1").setScale(0.5);
+    this.add.image(793, 200, "mountain2").setScale(0.5);
+    this.add.image(831, 10, "cloud1").setOrigin(0, 0).setScale(0.3);
 
     this.blocks = this.physics.add.staticGroup();
     this.misteryblock = this.physics.add.staticGroup();
@@ -187,6 +193,7 @@ export class Game extends Scene {
 
 
     //configurando a mario
+    
     this.mario = this.physics.add
       .sprite(0, 100, "mario")
       .setOrigin(0, 1);
@@ -205,7 +212,7 @@ export class Game extends Scene {
       this.goomba = this.physics.add.group({
         key: 'goomba',
         repeat: 2
-      })
+      }).setOrigin(0 ,1);
       this.goombaCoordinates = [
         { x: 100, y: 100, direction: 40, init: false },
         { x: 150, y: 50, direction: 40, init: false },
@@ -244,9 +251,19 @@ export class Game extends Scene {
       child.anims.play("misteryblock-anim", true);
     });
 
+    //------------colisiones----------------------------------------------------
+
     this.physics.add.collider(this.mario, this.blocks);
     this.physics.add.collider(this.mario, this.misteryblock);
     this.physics.add.collider(this.mario, this.pipe);
+    this.physics.add.collider(this.mario, this.goomba, (mario) => {
+      if (mario.body.touching.down) {
+        mario.setVelocityY(-250);
+      } else {
+        console.log("mario muere");
+        marioIsDeath = true;
+      }
+    });
 
     this.physics.add.collider(this.goomba, this.blocks);
     this.physics.add.collider(this.goomba, this.pipe);
@@ -255,6 +272,7 @@ export class Game extends Scene {
 
 
     this.keys = this.input.keyboard.createCursorKeys();
+    this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
 
     //      this.input.once('pointerdown', () => {
@@ -267,32 +285,48 @@ export class Game extends Scene {
   update() {
 
     //moviendo a mario
-    if (this.keys.up.isDown && this.mario.body.touching.down) {
-      this.mario.setVelocityY(-600);
-    }
-
-    if (this.keys.left.isDown) {
-      this.mario.setVelocityX(-120);
-      this.mario.anims.play("mario-walk", true);
-      this.mario.setFlipX(true);
-    } else if (this.keys.right.isDown) {
-      this.mario.setVelocityX(120);
-      this.mario.anims.play("mario-walk", true);
-      this.mario.setFlipX(false);
+    if (marioIsDeath == false) {
+      if (this.keys.up.isDown && this.mario.body.touching.down) {
+        this.mario.setVelocityY(-600);
+      }
+  
+      if (this.keys.left.isDown) {
+        this.mario.setVelocityX(-120);
+        this.mario.anims.play("mario-walk", true);
+        this.mario.setFlipX(true);
+      } else if (this.keys.right.isDown) {
+        this.mario.setVelocityX(120);
+        this.mario.anims.play("mario-walk", true);
+        this.mario.setFlipX(false);
+      } else {
+        this.mario.setVelocityX(0);
+        this.mario.anims.play("mario-walk", false);
+      }
+  
+      if (!this.mario.body.touching.down && this.mario.body.velocity.y != 0) {
+        this.mario.setFrame(5);
+      }
     } else {
+      this.mario.setFrame(4);
       this.mario.setVelocityX(0);
-      this.mario.anims.play("mario-walk", false);
+      setTimeout(() => {
+        if (this.mario.body.touching.down) {
+          this.mario.setVelocityY(-500);
+          this.physics.world.colliders.destroy(); 
+          this.physics.world.setBounds(0, 0, 1850, 240, true, true,  false, false);
+        }
+      },500);
     }
 
-    if (!this.mario.body.touching.down && this.mario.body.velocity.y != 0) {
-      this.mario.setFrame(5);
+    if (this.mario.y > 223) {
+      marioIsDeath = true;
     }
+    
 
 
 
     //moviendo a los goombas
-
-    this.goomba.children.iterate((child, index) => {
+    this.goomba.children.iterate((child) => {
       if (child.body.touching.right) {
         child.setVelocityX(-40);
       } else if (child.body.touching.left) {
@@ -300,7 +334,14 @@ export class Game extends Scene {
       }
   });
 
-    //kill mario
+
+
+
+    //letrea x 
+    if (this.keyX.isDown) {
+      console.log("x: " + this.mario.body.x);
+      console.log("y: " + this.mario.body.y);
+    }
 
     this.cameras.main.scrollX = this.mario.x - 60;
   }
