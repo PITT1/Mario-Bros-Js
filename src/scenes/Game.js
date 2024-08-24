@@ -32,8 +32,12 @@ export class Game extends Scene {
     this.load.spritesheet(
       "misteryblock",
       "/blocks/overworld/misteryBlock.png",
-      { frameWidth: 16, frameHeight: 16, startFrame: 0, endFrame: 2 }
+      { frameWidth: 16,
+        frameHeight: 16,
+        startFrame: 0,
+        endFrame: 2 }
     );
+    this.load.image('emptyBlock', '/blocks/overworld/emptyBlock.png');
   }
 
   create() {
@@ -284,9 +288,28 @@ export class Game extends Scene {
       }
     }
 
+    function handleMisteryBlockCollision(mario, misteryblock) {
+      if (mario.body.touching.up && misteryblock.body.touching.down) {
+        this.tweens.add({
+          targets: misteryblock,
+          y: misteryblock.y -= 3,
+          duration: 100,
+          ease: 'Sine.inOut',
+          onComplete: () => {
+            this.tweens.add({
+              targets: misteryblock,
+              y: misteryblock.y += 3,
+              duration: 100,
+              ease: 'Sine.inOut'
+            });
+          }
+        })
+      }
+    }
+
 
     this.physics.add.collider(this.mario, this.blocks, handleBlockCollision.bind(this));
-    this.physics.add.collider(this.mario, this.misteryblock);
+    this.physics.add.collider(this.mario, this.misteryblock, handleMisteryBlockCollision.bind(this));
     this.physics.add.collider(this.mario, this.pipe);
     this.physics.add.collider(this.mario, this.goomba, handleGoombaCollision.bind(this));
 
