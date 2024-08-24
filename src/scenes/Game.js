@@ -211,14 +211,14 @@ export class Game extends Scene {
     
       this.goomba = this.physics.add.group({
         key: 'goomba',
-        repeat: 2
+        repeat: 3
       }).setOrigin(0 ,1);
       this.goombaCoordinates = [
         { x: 100, y: 100, direction: 40, init: false, alive: true },
         { x: 150, y: 50, direction: 40, init: false, alive: true },
         { x: 250, y: 50, direction: 40, init: false, alive: true },
-        { x: 400, y: 250, direction: -40, init: false, alive: true },
-        { x: 500, y: 300, diection: -40, init: false, alive: true }
+        { x: 300, y: 50, direction: -40, init: false, alive: true },
+        { x: 350, y: 0, diection: -40, init: false, alive: true }
     ];
     this.anims.create({
       key: 'goomba-walk',
@@ -255,7 +255,25 @@ export class Game extends Scene {
 
     //------------colisiones----------------------------------------------------
 
-    this.physics.add.collider(this.mario, this.blocks);
+
+    this.physics.add.collider(this.mario, this.blocks, (mario, block) => {
+      if (mario.body.touching.up && block.body.touching.down) {
+        this.tweens.add({
+          targets: block,
+          y: block.y -= 3,
+          duration: 100,
+          ease: 'Sine.inOut',
+          onComplete: () => {
+            this.tweens.add({
+              targets: block,
+              y: block.y += 3,
+              duration: 100,
+              ease: 'Sine.inOut'
+            });
+          }
+        })
+      }
+    });
     this.physics.add.collider(this.mario, this.misteryblock);
     this.physics.add.collider(this.mario, this.pipe);
     this.physics.add.collider(this.mario, this.goomba, (mario, goomba) => {
