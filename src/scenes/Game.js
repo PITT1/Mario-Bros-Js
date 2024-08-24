@@ -207,18 +207,18 @@ export class Game extends Scene {
 
 
 
-    //creando a los goombas
+    //---------------------creando a los goombas-------------------------------------------------
     
       this.goomba = this.physics.add.group({
         key: 'goomba',
         repeat: 2
       }).setOrigin(0 ,1);
       this.goombaCoordinates = [
-        { x: 100, y: 100, direction: 40, init: false },
-        { x: 150, y: 50, direction: 40, init: false },
-        { x: 250, y: 50, direction: 40, init: false },
-        { x: 400, y: 250, direction: -40, init: false },
-        { x: 500, y: 300, diection: -40, init: false }
+        { x: 100, y: 100, direction: 40, init: false, alive: true },
+        { x: 150, y: 50, direction: 40, init: false, alive: true },
+        { x: 250, y: 50, direction: 40, init: false, alive: true },
+        { x: 400, y: 250, direction: -40, init: false, alive: true },
+        { x: 500, y: 300, diection: -40, init: false, alive: true }
     ];
     this.anims.create({
       key: 'goomba-walk',
@@ -235,7 +235,7 @@ export class Game extends Scene {
       child.anims.play('goomba-walk', true);
     });
 
-
+//------------------------------------------------------------
     
 
 //--------------------------------------------------------------------------
@@ -259,9 +259,10 @@ export class Game extends Scene {
     this.physics.add.collider(this.mario, this.misteryblock);
     this.physics.add.collider(this.mario, this.pipe);
     this.physics.add.collider(this.mario, this.goomba, (mario, goomba) => {
+      let goombaindex = this.goomba.getChildren().indexOf(goomba);
       if (mario.body.touching.down && goomba.body.touching.up) {
         mario.setVelocityY(-250);
-        goomba.destroy();
+        this.goombaCoordinates[goombaindex].alive = false;
       } else {
         console.log("mario muere");
         marioIsDeath = true;
@@ -329,11 +330,20 @@ export class Game extends Scene {
 
 
     //moviendo a los goombas
-    this.goomba.children.iterate((child) => {
-      if (child.body.touching.right) {
-        child.setVelocityX(-40);
-      } else if (child.body.touching.left) {
-        child.setVelocityX(40);
+    this.goomba.children.iterate((child, index) => {
+      if (this.goombaCoordinates[index].alive) {
+        if (child.body.touching.right) {
+          child.setVelocityX(-40);
+        } else if (child.body.touching.left) {
+          child.setVelocityX(40);
+        } 
+      } else {
+        child.setFrame(2);
+        child.setVelocityX(0);
+        child.body.enable = false;
+        setTimeout(() => {
+          child.visible = false;
+        },500);
       }
   });
 
