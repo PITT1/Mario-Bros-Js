@@ -66,7 +66,6 @@ export class Game extends Scene {
     this.blocks.create(400, 150, "block");
     this.blocks.create(416, 150, "block");
     this.blocks.create(432, 150, "block");
-    this.blocks.create(448, 86, "block");
     this.blocks.create(464, 86, "block");
     this.blocks.create(480, 86, "block");
     this.blocks.create(496, 86, "block");
@@ -255,8 +254,18 @@ export class Game extends Scene {
 
     //------------colisiones----------------------------------------------------
 
+    function handleGoombaCollision(mario, goomba) {
+      let goombaindex = this.goomba.getChildren().indexOf(goomba);
+      if (mario.body.touching.down && goomba.body.touching.up) {
+        mario.setVelocityY(-250);
+        this.goombaCoordinates[goombaindex].alive = false;
+      } else {
+        console.log("mario muere");
+        marioIsDeath = true;
+      }
+    }
 
-    this.physics.add.collider(this.mario, this.blocks, (mario, block) => {
+    function handleBlockCollision(mario, block) {
       if (mario.body.touching.up && block.body.touching.down) {
         this.tweens.add({
           targets: block,
@@ -273,19 +282,13 @@ export class Game extends Scene {
           }
         })
       }
-    });
+    }
+
+
+    this.physics.add.collider(this.mario, this.blocks, handleBlockCollision.bind(this));
     this.physics.add.collider(this.mario, this.misteryblock);
     this.physics.add.collider(this.mario, this.pipe);
-    this.physics.add.collider(this.mario, this.goomba, (mario, goomba) => {
-      let goombaindex = this.goomba.getChildren().indexOf(goomba);
-      if (mario.body.touching.down && goomba.body.touching.up) {
-        mario.setVelocityY(-250);
-        this.goombaCoordinates[goombaindex].alive = false;
-      } else {
-        console.log("mario muere");
-        marioIsDeath = true;
-      }
-    });
+    this.physics.add.collider(this.mario, this.goomba, handleGoombaCollision.bind(this));
 
     this.physics.add.collider(this.goomba, this.blocks);
     this.physics.add.collider(this.goomba, this.pipe);
