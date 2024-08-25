@@ -273,15 +273,15 @@ export class Game extends Scene {
       if (mario.body.touching.up && block.body.touching.down) {
         this.tweens.add({
           targets: block,
-          y: block.y -= 3,
-          duration: 100,
-          ease: 'Sine',
+          y: '-=10',
+          duration: 50,
+          ease: 'Linear',
           onComplete: () => {
             this.tweens.add({
               targets: block,
-              y: block.y += 3,
-              duration: 100,
-              ease: 'Sine'
+              y: '+= 10',
+              duration: 50,
+              ease: 'Linear'
             });
           }
         })
@@ -292,17 +292,18 @@ export class Game extends Scene {
       if (mario.body.touching.up && misteryblock.body.touching.down) {
         this.tweens.add({
           targets: misteryblock,
-          y: misteryblock.y -= 3,
+          y: '-=10',
           duration: 100,
-          ease: 'Sine.inOut',
+          ease: 'Linear',
           onComplete: () => {
+            console.log(this.misteryblock.getChildren().indexOf(misteryblock));
             misteryblock.anims.remove('misteryblock-anim');
             misteryblock.setTexture('emptyBlock');
             this.tweens.add({
               targets: misteryblock,
-              y: misteryblock.y += 3,
+              y: '+=10',
               duration: 100,
-              ease: 'Sine.inOut'
+              ease: 'Linear'
             });
           }
         })
@@ -378,6 +379,7 @@ export class Game extends Scene {
 
     if(this.keyX.isDown && this.keys.right.isDown) {
         this.mario.setAccelerationX(300);
+        
         this.mario.setMaxVelocity(170, 1120);
         this.mario.anims.play("mario-walk", true);
         this.mario.setFlipX(false);
@@ -385,6 +387,7 @@ export class Game extends Scene {
 
     if(this.keyX.isDown && this.keys.left.isDown) {
         this.mario.setAccelerationX(-300);
+        this.mario.anims.frameRate = 45;
         this.mario.setMaxVelocity(170, 1120);
         this.mario.anims.play("mario-walk", true);
         this.mario.setFlipX(true);
