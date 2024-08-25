@@ -214,10 +214,10 @@ export class Game extends Scene {
     
       this.goomba = this.physics.add.group({
         key: 'goomba',
-        repeat: 0
+        repeat: 3
       }).setOrigin(0 ,1);
       this.goombaCoordinates = [
-        { x: 100, y: 100, direction: -40, init: false, alive: false },
+        { x: 100, y: 100, direction: 40, init: false, alive: true },
         { x: 150, y: 50, direction: 40, init: false, alive: true },
         { x: 250, y: 50, direction: 40, init: false, alive: true },
         { x: 300, y: 50, direction: -40, init: false, alive: true },
@@ -275,13 +275,13 @@ export class Game extends Scene {
           targets: block,
           y: block.y -= 3,
           duration: 100,
-          ease: 'Sine.inOut',
+          ease: 'Sine',
           onComplete: () => {
             this.tweens.add({
               targets: block,
               y: block.y += 3,
               duration: 100,
-              ease: 'Sine.inOut'
+              ease: 'Sine'
             });
           }
         })
@@ -296,6 +296,8 @@ export class Game extends Scene {
           duration: 100,
           ease: 'Sine.inOut',
           onComplete: () => {
+            misteryblock.anims.remove('misteryblock-anim');
+            misteryblock.setTexture('emptyBlock');
             this.tweens.add({
               targets: misteryblock,
               y: misteryblock.y += 3,
@@ -340,12 +342,12 @@ export class Game extends Scene {
   
       if (this.keys.left.isDown) {
         this.mario.setAccelerationX(-300);
-        this.mario.setMaxVelocity(120, 1120);
+        this.mario.setMaxVelocity(100, 1120);
         this.mario.anims.play("mario-walk", true);
         this.mario.setFlipX(true);
       } else if (this.keys.right.isDown) {
         this.mario.setAccelerationX(300);
-        this.mario.setMaxVelocity(120, 1120);
+        this.mario.setMaxVelocity(100, 1120);
         this.mario.anims.play("mario-walk", true);
         this.mario.setFlipX(false);
       } else {
@@ -364,6 +366,7 @@ export class Game extends Scene {
     } else {
       this.mario.setFrame(4);
       this.mario.setVelocityX(0);
+      this.mario.body.setAccelerationX(0);
       setTimeout(() => {
         if (this.mario.body.touching.down) {
           this.mario.setVelocityY(-500);
@@ -373,8 +376,23 @@ export class Game extends Scene {
       },500);
     }
 
+    if(this.keyX.isDown && this.keys.right.isDown) {
+        this.mario.setAccelerationX(300);
+        this.mario.setMaxVelocity(170, 1120);
+        this.mario.anims.play("mario-walk", true);
+        this.mario.setFlipX(false);
+    }
+
+    if(this.keyX.isDown && this.keys.left.isDown) {
+        this.mario.setAccelerationX(-300);
+        this.mario.setMaxVelocity(170, 1120);
+        this.mario.anims.play("mario-walk", true);
+        this.mario.setFlipX(true);
+    }
+
     if (this.mario.y > 223) {
       marioIsDeath = true;
+      this.mario.body.setAccelerationX(0);
     }
     
 
@@ -397,14 +415,6 @@ export class Game extends Scene {
         },500);
       }
   });
-
-
-
-
-    //letrea x 
-    if (this.keyX.isDown) {
-      console.dir(this.mario.body);
-    }
 
     this.cameras.main.scrollX = this.mario.x - 60;
   }
