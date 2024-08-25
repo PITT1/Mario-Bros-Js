@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { Level1 } from './Level1';
 var marioIsDeath = false;
 
 export class Game extends Scene {
@@ -8,7 +9,13 @@ export class Game extends Scene {
 
 
   preload() {
+
     this.load.setPath("assets");
+
+    this.load.audio('jump', '/sound/effects/jump.mp3');
+    this.load.audio('block-bump', '/sound/effects/block-bump.wav');
+    this.load.audio('goomba-stomp', '/sound/effects/goomba-stomp.wav');
+
     this.load.image("cloud1", "/scenery/overworld/cloud1.png");
     this.load.image("cloud2", "scenery/overworld/cloud2.png");
     this.load.image("block", "blocks/overworld/block.png");
@@ -60,139 +67,9 @@ export class Game extends Scene {
     this.misteryblock = this.physics.add.staticGroup();
     this.pipe = this.physics.add.staticGroup();
 
-    this.blocks.create(175, 150, "block");
-    this.misteryblock.create(191, 150, "misteryblock");
-    this.blocks.create(207, 150, "block");
-    this.misteryblock.create(223, 150, "misteryblock");
-    this.blocks.create(239, 150, "block");
-    this.misteryblock.create(207, 86, "misteryblock");
-    this.pipe.create(320, 193, "pipe2");
-    this.blocks.create(400, 150, "block");
-    this.blocks.create(416, 150, "block");
-    this.blocks.create(432, 150, "block");
-    this.blocks.create(464, 86, "block");
-    this.blocks.create(480, 86, "block");
-    this.blocks.create(496, 86, "block");
-    this.blocks.create(448, 86, "block");
-    this.blocks.create(512, 86, "block");
-    this.blocks.create(592, 86, "block");
-    this.blocks.create(608, 86, "block");
-    this.blocks.create(624, 86, "block");
-    this.blocks.create(640, 86, "block");
-    this.blocks.create(656, 86, "block");
-    this.misteryblock.create(672, 86, "misteryblock");
-    this.blocks.create(672, 150, "block");
-    this.blocks.create(768, 150, "block");
-    this.blocks.create(784, 150, "block");
-    this.misteryblock.create(848, 150, "misteryblock");
-    this.misteryblock.create(896, 150, "misteryblock");
-    this.misteryblock.create(896, 86, "misteryblock");
-    this.misteryblock.create(944, 150, "misteryblock");
-    this.blocks.create(1024, 150, "block");
-    this.blocks.create(1088, 86, "block");
-    this.blocks.create(1104, 86, "block");
-    this.blocks.create(1120, 86, "block");
-    this.blocks.create(1216, 86, "block");
-    this.misteryblock.create(1232, 86, "misteryblock");
-    this.blocks.create(1232, 150, "block");
-    this.misteryblock.create(1248, 86, "misteryblock");
-    this.blocks.create(1248, 150, "block");
-    this.blocks.create(1264, 86, "block");
 
-    this.blocks.create(1312, 201, "immovableblock");
-    this.blocks.create(1328, 201, "immovableblock");
-    this.blocks.create(1328, 185, "immovableblock");
-    this.blocks.create(1344, 201, "immovableblock");
-    this.blocks.create(1344, 185, "immovableblock");
-    this.blocks.create(1344, 169, "immovableblock");
-    this.blocks.create(1360, 201, "immovableblock");
-    this.blocks.create(1360, 185, "immovableblock");
-    this.blocks.create(1360, 169, "immovableblock");
-    this.blocks.create(1360, 153, "immovableblock");
-    this.blocks.create(1408, 153, "immovableblock");
-    this.blocks.create(1408, 169, "immovableblock");
-    this.blocks.create(1408, 185, "immovableblock");
-    this.blocks.create(1408, 201, "immovableblock");
-    this.blocks.create(1424, 169, "immovableblock");
-    this.blocks.create(1424, 185, "immovableblock");
-    this.blocks.create(1424, 201, "immovableblock");
-    this.blocks.create(1440, 185, "immovableblock");
-    this.blocks.create(1440, 201, "immovableblock");
-    this.blocks.create(1456, 201, "immovableblock");
-
-    this.blocks.create(1552, 201, "immovableblock");
-
-    this.blocks.create(1568, 201, "immovableblock");
-    this.blocks.create(1568, 185, "immovableblock");
-
-    this.blocks.create(1584, 201, "immovableblock");
-    this.blocks.create(1584, 185, "immovableblock");
-    this.blocks.create(1584, 169, "immovableblock");
-
-    this.blocks.create(1600, 201, "immovableblock");
-    this.blocks.create(1600, 185, "immovableblock");
-    this.blocks.create(1600, 169, "immovableblock");
-    this.blocks.create(1600, 153, "immovableblock");
-
-    this.blocks.create(1616, 201, "immovableblock");
-    this.blocks.create(1616, 185, "immovableblock");
-    this.blocks.create(1616, 169, "immovableblock");
-    this.blocks.create(1616, 153, "immovableblock");
-    this.blocks.create(1616, 137, "immovableblock");
-
-    this.blocks.create(1632, 201, "immovableblock");
-    this.blocks.create(1632, 185, "immovableblock");
-    this.blocks.create(1632, 169, "immovableblock");
-    this.blocks.create(1632, 153, "immovableblock");
-    this.blocks.create(1632, 137, "immovableblock");
-    this.blocks.create(1632, 121, "immovableblock");
-
-    this.blocks.create(1648, 201, "immovableblock");
-    this.blocks.create(1648, 185, "immovableblock");
-    this.blocks.create(1648, 169, "immovableblock");
-    this.blocks.create(1648, 153, "immovableblock");
-    this.blocks.create(1648, 137, "immovableblock");
-    this.blocks.create(1648, 121, "immovableblock");
-    this.blocks.create(1648, 105, "immovableblock");
-
-    this.blocks.create(1664, 201, "immovableblock");
-    this.blocks.create(1664, 185, "immovableblock");
-    this.blocks.create(1664, 169, "immovableblock");
-    this.blocks.create(1664, 153, "immovableblock");
-    this.blocks.create(1664, 137, "immovableblock");
-    this.blocks.create(1664, 121, "immovableblock");
-    this.blocks.create(1664, 105, "immovableblock");
-    this.blocks.create(1664, 89, "immovableblock");
-
-    this.blocks.create(1680, 201, "immovableblock");
-    this.blocks.create(1680, 185, "immovableblock");
-    this.blocks.create(1680, 169, "immovableblock");
-    this.blocks.create(1680, 153, "immovableblock");
-    this.blocks.create(1680, 137, "immovableblock");
-    this.blocks.create(1680, 121, "immovableblock");
-    this.blocks.create(1680, 105, "immovableblock");
-    this.blocks.create(1680, 89, "immovableblock");
-
-    this.blocks.create(1840, 201, "immovableblock");
-
-    this.blocks.create(-78, 225, "floorbricks");
-    this.blocks.create(50, 225, "floorbricks");
-    this.blocks.create(178, 225, "floorbricks");
-    this.blocks.create(306, 225, "floorbricks");
-    this.blocks.create(434, 225, "floorbricks");
-    //this.blocks.create(562, 225, 'floorbricks');
-    this.blocks.create(690, 225, "floorbricks");
-    this.blocks.create(818, 225, "floorbricks");
-    this.blocks.create(946, 225, "floorbricks");
-    this.blocks.create(1074, 225, "floorbricks");
-    this.blocks.create(1202, 225, "floorbricks");
-    this.blocks.create(1330, 225, "floorbricks");
-    this.blocks.create(1458, 225, "floorbricks");
-    this.blocks.create(1586, 225, "floorbricks");
-    this.blocks.create(1714, 225, "floorbricks");
-    this.blocks.create(1842, 225, "floorbricks");
-
-    this.misteryblock.create(100, 150, "misteryblock");
+    //mapa del nivel 1
+    Level1(this);
 
 
     //configurando a mario
@@ -261,6 +138,7 @@ export class Game extends Scene {
     function handleGoombaCollision(mario, goomba) {
       let goombaindex = this.goomba.getChildren().indexOf(goomba);
       if (mario.body.touching.down && goomba.body.touching.up) {
+        this.sound.play('goomba-stomp', {volume: 0.55});
         mario.setVelocityY(-250);
         this.goombaCoordinates[goombaindex].alive = false;
       } else {
@@ -271,6 +149,7 @@ export class Game extends Scene {
 
     function handleBlockCollision(mario, block) {
       if (mario.body.touching.up && block.body.touching.down) {
+        this.sound.play('block-bump', {volume: 0.55});
         this.tweens.add({
           targets: block,
           y: '-=10',
@@ -290,6 +169,7 @@ export class Game extends Scene {
 
     function handleMisteryBlockCollision(mario, misteryblock) {
       if (mario.body.touching.up && misteryblock.body.touching.down) {
+        this.sound.play('block-bump', {volume: 0.55});
         this.tweens.add({
           targets: misteryblock,
           y: '-=10',
@@ -339,6 +219,7 @@ export class Game extends Scene {
     if (marioIsDeath == false) {
       if (this.keys.up.isDown && this.mario.body.touching.down) {
         this.mario.setVelocityY(-570);
+        this.sound.play('jump', {volume: 0.05});
       }
   
       if (this.keys.left.isDown) {
