@@ -72,11 +72,10 @@ export class Game extends Scene {
     Level1(this);
 
 
-    //configurando a mario
+    //-----------------------creando a mario a mario------------------------------
     
     this.mario = this.physics.add
-      .sprite(0, 100, "mario")
-      .setOrigin(0, 1);
+      .sprite(0, 100, "mario").setSize(13, 16);
     this.anims.create({
       key: "mario-walk",
       frames: this.anims.generateFrameNumbers("mario", { start: 0, end: 3 }),
@@ -92,7 +91,7 @@ export class Game extends Scene {
       this.goomba = this.physics.add.group({
         key: 'goomba',
         repeat: 3
-      }).setOrigin(0 ,1);
+      });
       this.goombaCoordinates = [
         { x: 100, y: 100, direction: 40, init: false, alive: true },
         { x: 150, y: 50, direction: 40, init: false, alive: true },
@@ -118,7 +117,7 @@ export class Game extends Scene {
 //------------------------------------------------------------
     
 
-//--------------------------------------------------------------------------
+//--------------mistery blocks------------------------------------------------------------
     this.anims.create({
       key: "misteryblock-anim",
       frames: this.anims.generateFrameNumbers("misteryblock", {
@@ -130,7 +129,8 @@ export class Game extends Scene {
     });
 
     this.misteryblock.children.iterate((child) => {
-      child.anims.play("misteryblock-anim", true);
+        child.anims.play("misteryblock-anim", true);
+        child.body.setSize(10, 16);
     });
 
     //------------colisiones----------------------------------------------------
@@ -177,7 +177,9 @@ export class Game extends Scene {
           ease: 'Linear',
           onComplete: () => {
             console.log(this.misteryblock.getChildren().indexOf(misteryblock));
-            misteryblock.anims.remove('misteryblock-anim');
+            if (misteryblock.anims.currentAnim) {
+              misteryblock.anims.destroy(); 
+            }
             misteryblock.setTexture('emptyBlock');
             this.tweens.add({
               targets: misteryblock,
@@ -300,6 +302,7 @@ export class Game extends Scene {
       }
   });
 
-    this.cameras.main.scrollX = this.mario.x - 60;
+
+   this.cameras.main.scrollX = this.mario.x - 60;
   }
 }
