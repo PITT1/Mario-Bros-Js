@@ -15,6 +15,9 @@ export class Game extends Scene {
     this.load.audio('jump', '/sound/effects/jump.mp3');
     this.load.audio('block-bump', '/sound/effects/block-bump.wav');
     this.load.audio('goomba-stomp', '/sound/effects/goomba-stomp.wav');
+    this.load.audio('coin', '/sound/effects/coin.mp3');
+    this.load.audio('theme', '/sound/music/overworld/theme.mp3');
+    this.load.audio('gameover', '/sound/music/gameover.mp3');
 
     this.load.image("cloud1", "/scenery/overworld/cloud1.png");
     this.load.image("cloud2", "scenery/overworld/cloud2.png");
@@ -48,6 +51,8 @@ export class Game extends Scene {
   }
 
   create() {
+    this.sound.play('theme', {volume: 0.25});
+
     this.cameras.main.setBackgroundColor("049cd8");
 
     this.physics.world.gravity.y = 2000;
@@ -169,7 +174,11 @@ export class Game extends Scene {
 
     function handleMisteryBlockCollision(mario, misteryblock) {
       if (mario.body.touching.up && misteryblock.body.touching.down) {
-        this.sound.play('block-bump', {volume: 0.55});
+        if (misteryblock.anims.currentAnim) {
+          this.sound.play('coin', {volume: 0.15});
+        } else {
+          this.sound.play('block-bump', {volume: 0.55});
+        }
         this.tweens.add({
           targets: misteryblock,
           y: '-=10',
@@ -178,7 +187,7 @@ export class Game extends Scene {
           onComplete: () => {
             console.log(this.misteryblock.getChildren().indexOf(misteryblock));
             if (misteryblock.anims.currentAnim) {
-              misteryblock.anims.destroy(); 
+              misteryblock.anims.destroy();      
             }
             misteryblock.setTexture('emptyBlock');
             this.tweens.add({
