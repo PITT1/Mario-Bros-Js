@@ -47,6 +47,20 @@ export class Game extends Scene {
         startFrame: 0,
         endFrame: 2 }
     );
+
+    this.load.spritesheet('koopa', '/entities/koopa.png', {
+      frameWidth: 16,
+      frameHeight: 24,
+      startFrame: 0,
+      endFrame: 1
+    });
+    this.load.spritesheet('shell', '/entities/shell.png', {
+      frameWidth: 16,
+      frameHeight: 15,
+      startFrame: 0,
+      endFrame: 1
+    });
+
     this.load.image('emptyBlock', '/blocks/overworld/emptyBlock.png');
   }
 
@@ -95,7 +109,7 @@ export class Game extends Scene {
     
       this.goomba = this.physics.add.group({
         key: 'goomba',
-        repeat: 3
+        repeat: 0
       });
       this.goombaCoordinates = [
         { x: 100, y: 100, direction: 40, init: false, alive: true },
@@ -119,8 +133,30 @@ export class Game extends Scene {
       child.anims.play('goomba-walk', true);
     });
 
-//------------------------------------------------------------
-    
+//------------------creando a los koopas-------------------------------
+
+this.koopa = this.physics.add.group({
+  key: 'koopa',
+  repeat: 1
+})
+this.koopaCoordinates = [
+  {x: 250, y: 0, direction: 40, init:false, alive: true},
+  {x: 200, y: 0, direction: -40, init:false, alive: true}
+];
+this.anims.create({
+  key: 'koopa-walk',
+  frames: this.anims.generateFrameNumbers('koopa', {start: 0, end: 1}),
+  repeat: -1,
+  frameRate: 6
+});
+this.koopa.children.iterate((koopa, index) => {
+  koopa.setPosition(this.koopaCoordinates[index].x, this.koopaCoordinates[index].y)
+  if (this.koopaCoordinates[index].init == false) {
+    this.koopaCoordinates[index].init = true;
+    koopa.setVelocityX(this.koopaCoordinates[index].direction);
+  }
+  koopa.anims.play('koopa-walk', true);
+})
 
 //--------------mistery blocks------------------------------------------------------------
     this.anims.create({
@@ -206,11 +242,19 @@ export class Game extends Scene {
     this.physics.add.collider(this.mario, this.misteryblock, handleMisteryBlockCollision.bind(this));
     this.physics.add.collider(this.mario, this.pipe);
     this.physics.add.collider(this.mario, this.goomba, handleGoombaCollision.bind(this));
+    this.physics.add.collider(this.mario, this.koopa)
 
     this.physics.add.collider(this.goomba, this.blocks);
     this.physics.add.collider(this.goomba, this.pipe);
     this.physics.add.collider(this.goomba, this.misteryblock);
     this.physics.add.collider(this.goomba, this.goomba);
+
+    this.physics.add.collider(this.koopa, this.blocks);
+    this.physics.add.collider(this.koopa, this.pipe);
+    this.physics.add.collider(this.koopa, this.misteryblock);
+    this.physics.add.collider(this.koopa, this.goomba);
+    this.physics.add.collider(this.koopa, this.koopa);
+    
 
 
     this.keys = this.input.keyboard.createCursorKeys();
@@ -289,8 +333,23 @@ export class Game extends Scene {
       marioIsDeath = true;
       this.mario.body.setAccelerationX(0);
     }
-    
 
+    //----------------moviendo a los koopas------------------------------
+    this.koopa.children.iterate((child, index) => {
+      if (this.koopaCoordinates[index].alive) {
+        if (child.body.touching.right) {
+          child.setFlipX(false);
+          child.setVelocityX(-40);
+        } else if (child.body.touching.left) {
+          child.setVelocityX(40);
+          child.setFlipX(true);
+        } 
+      } else {
+        child.visible = false;
+        child.setVelocityX(0);
+        child.body.enable = false;
+      }
+  });
 
 
     //moviendo a los goombas
