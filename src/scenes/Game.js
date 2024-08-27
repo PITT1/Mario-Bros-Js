@@ -158,6 +158,7 @@ this.koopa.children.iterate((koopa, index) => {
   koopa.anims.play('koopa-walk', true);
 })
 
+
 //--------------mistery blocks------------------------------------------------------------
     this.anims.create({
       key: "misteryblock-anim",
@@ -237,12 +238,30 @@ this.koopa.children.iterate((koopa, index) => {
       }
     }
 
+    function handleKoopaColision(mario, koopa) {
+      if (mario.body.touching.down && koopa.body.touching.up) {
+        mario.setVelocityY(-250);
+        koopa.setVelocityX(0);
+        koopa.setVelocityY(-100);
+        console.dir(koopa);
+        if (koopa.anims.currentAnim) {
+          koopa.anims.destroy();      
+        } 
+        setTimeout(() => {
+          koopa.setVelocityY(-100);
+          koopa.setTexture('shell').setFrame(1);
+        },500)
+      } else {
+        marioIsDeath = true;
+      }
+    }
+
 
     this.physics.add.collider(this.mario, this.blocks, handleBlockCollision.bind(this));
     this.physics.add.collider(this.mario, this.misteryblock, handleMisteryBlockCollision.bind(this));
     this.physics.add.collider(this.mario, this.pipe);
     this.physics.add.collider(this.mario, this.goomba, handleGoombaCollision.bind(this));
-    this.physics.add.collider(this.mario, this.koopa)
+    this.physics.add.collider(this.mario, this.koopa, handleKoopaColision.bind(this));
 
     this.physics.add.collider(this.goomba, this.blocks);
     this.physics.add.collider(this.goomba, this.pipe);
