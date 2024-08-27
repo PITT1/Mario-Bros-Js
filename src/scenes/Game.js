@@ -140,8 +140,8 @@ this.koopa = this.physics.add.group({
   repeat: 1
 })
 this.koopaCoordinates = [
-  {x: 250, y: 0, direction: 40, init:false, alive: true},
-  {x: 200, y: 0, direction: -40, init:false, alive: true}
+  {x: 250, y: 0, direction: 40, shell: false, init:false, alive: true},
+  {x: 200, y: 0, direction: -40, shell: false, init:false, alive: true}
 ];
 this.anims.create({
   key: 'koopa-walk',
@@ -239,7 +239,9 @@ this.koopa.children.iterate((koopa, index) => {
     }
 
     function handleKoopaColision(mario, koopa) {
-      if (mario.body.touching.down && koopa.body.touching.up) {
+      let koopaindex = this.koopa.getChildren().indexOf(koopa);
+      if (mario.body.touching.down && koopa.body.touching.up && !this.koopaCoordinates[koopaindex].shell) {
+        this.koopaCoordinates[koopaindex].shell = true;
         mario.setVelocityY(-250);
         koopa.setVelocityX(0);
         koopa.setVelocityY(-100);
@@ -248,11 +250,17 @@ this.koopa.children.iterate((koopa, index) => {
           koopa.anims.destroy();      
         } 
         setTimeout(() => {
+          koopa.setVelocityY(-150);
+          koopa.setTexture('shell').setFrame(1).setSize(16, 16);
+        },100)
+      } else if (mario.body.touching.down && koopa.body.touching.up && this.koopaCoordinates[koopaindex].shell) {
+        if (mario.body.x > koopa.body.x) {
+          koopa.setVelocityX(-200);
           koopa.setVelocityY(-100);
-          koopa.setTexture('shell').setFrame(1);
-        },500)
-      } else {
-        marioIsDeath = true;
+        } else {
+          koopa.setVelocityX(200);
+          koopa.setVelocityY(-100);
+        }
       }
     }
 
