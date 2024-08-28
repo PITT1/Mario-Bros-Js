@@ -242,12 +242,11 @@ this.koopa.children.iterate((koopa, index) => {
 
     function handleShellMarioCollision(shell, mario) {
       if (mario.body.touching.down && shell.body.touching.up) {
+        mario.setVelocityY(-200);
         if (mario.x > shell.x) {
           shell.setVelocityX(-200);
-          mario.setVelocityY(-100)
         } else {
           shell.setVelocityX(200);
-          mario.setVelocityY(-100);
         }
       } else if (shell.body.touching.left || shell.body.touching.right){
         if (shell.body.velocity.x !== 0) {
@@ -275,6 +274,12 @@ this.koopa.children.iterate((koopa, index) => {
         goomba.setVelocityY(-200);
         goomba.setFlipY(true);
         goomba.body.checkCollision.down = false;
+        goomba.body.checkCollision.left = false;
+        goomba.body.checkCollision.up = false;
+        goomba.body.checkCollision.right = false;
+        setTimeout(() => {
+          goomba.body.enable = false;
+        },700);
       }
     }
 
@@ -283,6 +288,12 @@ this.koopa.children.iterate((koopa, index) => {
         koopa.setVelocityY(-200);
         koopa.setFlipY(true);
         koopa.body.checkCollision.down = false;
+        koopa.body.checkCollision.left = false;
+        koopa.body.checkCollision.up = false;
+        koopa.body.checkCollision.right = false;
+        setTimeout(() => {
+          koopa.body.enable = false;
+        },700);
       }
     }
 
