@@ -240,7 +240,51 @@ this.koopa.children.iterate((koopa, index) => {
       }
     }
 
-    this.shell = this.physics.add.image();
+    function handleShellMarioCollision(shell, mario) {
+      if (mario.body.touching.down && shell.body.touching.up) {
+        if (mario.x > shell.x) {
+          shell.setVelocityX(-200);
+          mario.setVelocityY(-100)
+        } else {
+          shell.setVelocityX(200);
+          mario.setVelocityY(-100);
+        }
+      } else if (shell.body.touching.left || shell.body.touching.right){
+        if (shell.body.velocity.x !== 0) {
+          marioIsDeath = true;
+        } else {
+          if (mario.body.touching.left) {
+            shell.setVelocityX(-200);
+          } else if (mario.body.touching.right){
+            shell.setVelocityX(200);
+          }
+        }
+      }
+    }
+
+    function handlePipeShellColision(shell) {
+      if (shell.body.touching.left) {
+        shell.setVelocityX(200);
+      } else if (shell.body.touching.right){
+        shell.setVelocityX(-200);
+      }
+    }
+
+    function handleShellGoombaCollision(shell, goomba) {
+      if (shell.body.velocity.x !== 0) {
+        goomba.setVelocityY(-200);
+        goomba.setFlipY(true);
+        goomba.body.checkCollision.down = false;
+      }
+    }
+
+    function handleShellKoopaCollision(shell, koopa) {
+      if (shell.body.velocity.x !== 0) {
+        koopa.setVelocityY(-200);
+        koopa.setFlipY(true);
+        koopa.body.checkCollision.down = false;
+      }
+    }
 
     function handleKoopaColision(mario, koopa) {
       let koopaindex = this.koopa.getChildren().indexOf(koopa);
@@ -257,8 +301,12 @@ this.koopa.children.iterate((koopa, index) => {
         
 
         //crear al shell con physicas
-        const shell = this.physics.add.image( koopa.x, koopa.y, 'shell', 1);
-        this.physics.add.collider(shell, this.blocks);
+        this.shell = this.physics.add.image( koopa.x, koopa.y, 'shell', 1);
+        this.physics.add.collider(this.shell, this.blocks);
+        this.physics.add.collider(this.shell, this.pipe, handlePipeShellColision.bind(this));
+        this.physics.add.overlap(this.shell, this.koopa, handleShellKoopaCollision.bind(this));
+        this.physics.add.overlap(this.shell, this.goomba, handleShellGoombaCollision.bind(this));
+        this.physics.add.overlap(this.shell, this.mario, handleShellMarioCollision.bind(this));
         //
       } else {
         marioIsDeath = true;
