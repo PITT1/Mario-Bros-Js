@@ -262,6 +262,11 @@ this.koopa.children.iterate((koopa, index) => {
           koopa.setVelocityY(-100);
         }
       }
+      if (mario.body.touching.left || mario.body.touching.right && !this.koopaCoordinates[koopaindex].shell) {
+        marioIsDeath = true;
+      } else if(mario.body.touching.left || mario.body.touching.right && this.koopaCoordinates[koopaindex].shell && koopa.body.velocity.x !== 0) {
+        marioIsDeath = true;
+      }
     }
 
 
@@ -364,12 +369,19 @@ this.koopa.children.iterate((koopa, index) => {
     //----------------moviendo a los koopas------------------------------
     this.koopa.children.iterate((child, index) => {
       if (this.koopaCoordinates[index].alive) {
-        if (child.body.touching.right) {
+        if (child.body.touching.right && !this.koopaCoordinates[index].shell) {
           child.setFlipX(false);
           child.setVelocityX(-40);
-        } else if (child.body.touching.left) {
+        } else if (child.body.touching.left && !this.koopaCoordinates[index].shell) {
           child.setVelocityX(40);
           child.setFlipX(true);
+        }
+        if (child.body.touching.right && this.koopaCoordinates[index].shell) {
+          child.setVelocityX(-200);
+          child.setVelocityY(-100);
+        } else if (child.body.touching.left && this.koopaCoordinates[index].shell) {
+          child.setVelocityX(200);
+          child.setVelocityY(-100);
         } 
       } else {
         child.visible = false;
