@@ -262,10 +262,30 @@ this.koopa.children.iterate((koopa, index) => {
           koopa.setVelocityY(-100);
         }
       }
-      if (mario.body.touching.left || mario.body.touching.right && !this.koopaCoordinates[koopaindex].shell) {
+      if (mario.body.touching.left && koopa.body.touching.right && !this.koopaCoordinates[koopaindex].shell) {
         marioIsDeath = true;
-      } else if(mario.body.touching.left || mario.body.touching.right && this.koopaCoordinates[koopaindex].shell && koopa.body.velocity.x !== 0) {
+      } else if(mario.body.touching.right && koopa.body.touching.left && !this.koopaCoordinates[koopaindex].shell) {
         marioIsDeath = true;
+      } else if(mario.body.touching.left && koopa.body.touching.right && this.koopaCoordinates[koopaindex].shell && koopa.body.velocity.x !== 0) {
+        marioIsDeath = true;
+      } else if (mario.body.touching.right && koopa.body.touching.left && this.koopaCoordinates[koopaindex].shell && koopa.body.velocity.x !== 0) {
+        marioIsDeath = true;
+      }
+    }
+    function handleKoopaGoombaCollision(koopa, goomba) {
+      let koopaindex = this.koopa.getChildren().indexOf(koopa);
+      if (koopa.body.touching.left && goomba.body.touching.right && this.koopaCoordinates[koopaindex].shell) {
+        goomba.setVelocityY(-400);
+        goomba.setFlipY(true);
+        goomba.active = false;
+        goomba.anims.destroy();
+        goomba.body.removeCollidesWith(1);
+      } else if (koopa.body.touching.right && goomba.body.touching.left && this.koopaCoordinates[koopaindex].shell) {
+        goomba.setVelocityY(-300);
+        goomba.setFlipY(true);
+        goomba.active = false;
+        goomba.anims.destroy();
+        goomba.body.removeCollidesWith(1);
       }
     }
 
@@ -284,7 +304,7 @@ this.koopa.children.iterate((koopa, index) => {
     this.physics.add.collider(this.koopa, this.blocks);
     this.physics.add.collider(this.koopa, this.pipe);
     this.physics.add.collider(this.koopa, this.misteryblock);
-    this.physics.add.collider(this.koopa, this.goomba);
+    this.physics.add.collider(this.koopa, this.goomba, handleKoopaGoombaCollision.bind(this));
     this.physics.add.collider(this.koopa, this.koopa);
     
 
