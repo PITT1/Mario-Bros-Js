@@ -225,7 +225,39 @@ this.koopa.children.iterate((koopa, index) => {
           duration: 100,
           ease: 'Linear',
           onComplete: () => {
-            console.log(this.misteryblock.getChildren().indexOf(misteryblock));
+            if(this.misteryblock.getChildren().indexOf(misteryblock) == 0){
+              this.superMushroom = this.physics.add.image( misteryblock.x, misteryblock.y, 'mushroom');
+              this.tweens.add({
+                targets: this.superMushroom,
+                y:'-26',
+                duration: 500,
+                ease: 'linear'
+              })
+              function handleMushroomBlockCollision (mushroom) {
+                if (mushroom.body.touching.right) {
+                  mushroom.setVelocityX(-60);
+                } else if (mushroom.body.touching.left) {
+                  mushroom.setVelocityX(60);
+                }
+              }
+              function handleMushroomPipeCollision (mushroom) {
+                if (mushroom.body.touching.right) {
+                  mushroom.setVelocityX(-60);
+                } else if (mushroom.body.touching.left) {
+                  mushroom.setVelocityX(60);
+                }
+              }
+              function handleMushroomMarioCollision (mushroom, mario) {
+                console.log("mario crece");
+              }
+              this.physics.add.collider(this.superMushroom, this.blocks, handleMushroomBlockCollision.bind(this));
+              this.physics.add.collider(this.superMushroom, this.pipe, handleMushroomPipeCollision.bind(this));
+              this.physics.add.collider(this.superMushroom, this.misteryblock);
+              this.physics.add.overlap(this.superMushroom, this.mario, handleMushroomMarioCollision.bind(this))
+              setTimeout(() => {
+                this.superMushroom.setVelocityX(60);
+              }, 600);
+            };
             if (misteryblock.anims.currentAnim) {
               misteryblock.anims.destroy();      
             }
