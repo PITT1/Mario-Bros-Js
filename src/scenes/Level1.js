@@ -1,6 +1,6 @@
-export function Level1 ({ blocks, misteryblock, pipe }) {
+export function Level1 ({ blocks, misteryblock, pipe, surpriseblock }) {
     blocks.create(175, 150, "block");
-    misteryblock.create(191, 150, "misteryblock");
+     misteryblock.create(191, 150, "misteryblock");
     blocks.create(207, 150, "block");
     misteryblock.create(223, 150, "misteryblock");
     blocks.create(239, 150, "block");

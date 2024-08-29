@@ -26,6 +26,7 @@ export class Game extends Scene {
     this.load.image("bush1", "scenery/overworld/bush1.png");
     this.load.image("mountain2", "scenery/overworld/mountain2.png");
     this.load.image("pipe2", "/scenery/pipe2.png");
+    this.load.image('mushroom', '/collectibles/super-mushroom.png');
     this.load.spritesheet("goomba", "/entities/overworld/goomba.png", {
       frameWidth: 16,
       frameHeight: 16,
@@ -241,13 +242,18 @@ this.koopa.children.iterate((koopa, index) => {
     }
 
     function handleShellMarioCollision(shell, mario) {
-      if (mario.body.touching.down && shell.body.touching.up) {
+      if (mario.body.touching.down && shell.body.touching.up && shell.body.velocity.x == 0) {
         mario.setVelocityY(-200);
         if (mario.x > shell.x) {
           shell.setVelocityX(-200);
         } else {
           shell.setVelocityX(200);
         }
+      } else if (mario.body.touching.down && shell.body.touching.up && shell.body.velocity.x != 0) {
+        mario.setVelocityY(-300);
+        setTimeout(() => {
+          shell.setVelocityX(0);
+        }, 50)
       } else if (shell.body.touching.left || shell.body.touching.right){
         if (shell.body.velocity.x !== 0) {
           marioIsDeath = true;
