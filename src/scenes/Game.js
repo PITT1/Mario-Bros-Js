@@ -40,6 +40,13 @@ export class Game extends Scene {
       startFrame: 0,
       endFrame: 5,
     });
+    this.load.spritesheet('mario-grown', '/entities/mario-grown.png',
+      {frameWidth: 18,
+        frameHeight: 32,
+        startFrame: 0,
+        endFrame: 5
+      }
+    );
     this.load.spritesheet(
       "misteryblock",
       "/blocks/overworld/misteryBlock.png",
@@ -225,7 +232,7 @@ this.koopa.children.iterate((koopa, index) => {
           duration: 100,
           ease: 'Linear',
           onComplete: () => {
-            if(this.misteryblock.getChildren().indexOf(misteryblock) == 0){
+            if(this.misteryblock.getChildren().indexOf(misteryblock) == 0 && misteryblock.anims.currentAnim){
               this.superMushroom = this.physics.add.image( misteryblock.x, misteryblock.y, 'mushroom');
               this.tweens.add({
                 targets: this.superMushroom,
@@ -249,6 +256,8 @@ this.koopa.children.iterate((koopa, index) => {
               }
               function handleMushroomMarioCollision (mushroom, mario) {
                 console.log("mario crece");
+                mushroom.destroy();
+                console.dir(mario);
               }
               this.physics.add.collider(this.superMushroom, this.blocks, handleMushroomBlockCollision.bind(this));
               this.physics.add.collider(this.superMushroom, this.pipe, handleMushroomPipeCollision.bind(this));
